@@ -12,7 +12,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 users_db: Dict[str, User] = {}
-#hello, its git commit -a
+#hello, git commmit -a isnt working, git add {filename}, git commit -m {filename}, git push
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(
