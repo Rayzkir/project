@@ -8,13 +8,11 @@ import uuid
 
 app = FastAPI(title="User Management System")
 
-# Настройка статических файлов и шаблонов
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 users_db: Dict[str, User] = {}
 
-# Главная страница с поиском
 @app.get("/", response_class=HTMLResponse)
 async def read_root(
     request: Request,
@@ -32,7 +30,6 @@ async def read_root(
         }
     )
 
-# Создание пользователя
 @app.post("/users/", response_class=RedirectResponse)
 async def create_user(
     name: str = Form(..., min_length=2, max_length=50),
@@ -42,7 +39,6 @@ async def create_user(
     users_db[user_id] = User(id=user_id, name=name, age=age)
     return RedirectResponse("/", status_code=status.HTTP_303_SEE_OTHER)
 
-# Форма редактирования
 @app.get("/users/{user_id}/edit", response_class=HTMLResponse)
 async def edit_user_form(request: Request, user_id: str):
     if user_id not in users_db:
@@ -55,7 +51,6 @@ async def edit_user_form(request: Request, user_id: str):
         }
     )
 
-# Обновление пользователя
 @app.post("/users/{user_id}/edit", response_class=RedirectResponse)
 async def update_user(
     user_id: str,
@@ -67,16 +62,13 @@ async def update_user(
     users_db[user_id] = User(id=user_id, name=name, age=age)
     return RedirectResponse("/", status_code=status.HTTP_303_SEE_OTHER)
 
-# Удаление пользователя
 @app.post("/users/{user_id}/delete", response_class=RedirectResponse)
 async def delete_user(user_id: str):
     if user_id in users_db:
         del users_db[user_id]
     return RedirectResponse("/", status_code=status.HTTP_303_SEE_OTHER)
 
-# Оставшиеся API endpoints (для мобильных клиентов)
+#для мобильных клиентов
 @app.get("/api/users", response_model=List[User])
 async def api_get_users():
     return list(users_db.values())
-
-# ... другие API endpoints ...
